@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.robot.subsystems.SwerveModule;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
  * project.
  */
 public class Robot extends TimedRobot {
+  SwerveModule frontLeft = new SwerveModule(1,2,10, 11);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -33,7 +35,9 @@ public class Robot extends TimedRobot {
   public void teleopInit() {}
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    frontLeft.periodic();
+  }
 
   @Override
   public void disabledInit() {}
