@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.subsystems.SwerveModule;
 
 /**
@@ -15,6 +16,7 @@ import frc.robot.subsystems.SwerveModule;
  */
 public class Robot extends TimedRobot {
   SwerveModule frontLeft = new SwerveModule(1,2,10, 11);
+  XboxController m_Xbox = new XboxController(0);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -37,6 +39,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     frontLeft.periodic();
+    applyOperatorInputs();
   }
 
   @Override
@@ -56,4 +59,22 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {}
-}
+
+  private void applyOperatorInputs() {
+    if (m_Xbox.getAButton()) {
+      frontLeft.setStateAngle0();
+    }
+    else if (m_Xbox.getBButton()) {
+      frontLeft.setStateAngle90();
+    }
+    else if (m_Xbox.getXButton()) {
+      frontLeft.setStateAngle180();
+    }
+    else if (m_Xbox.getYButton()) {
+      frontLeft.setStateAngle270();
+    }
+    else {
+      frontLeft.setStateStop();
+    }
+    }
+  }
