@@ -56,7 +56,7 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public void periodic(){
-        double swerveDegreeAngle = (steeringMotor.getSelectedSensorPosition() % (2048*12.8)) * (360 / (2048 * 12.8));
+        double swerveDegreeAngle = (steeringMotor.getSelectedSensorPosition() % (2048 * 12.8)) * (360 / (2048 * 12.8));
         double error = m_SteeringPID.calculate(swerveDegreeAngle);
         SmartDashboard.putNumber("swerve angle (deg): ", swerveDegreeAngle);
         SmartDashboard.putNumber("swerve angle: ", steeringMotor.getSelectedSensorPosition());
@@ -83,5 +83,4 @@ public class SwerveModule extends SubsystemBase{
             steeringMotor.set(TalonFXControlMode.PercentOutput, error);
         }
     }
-
 }
