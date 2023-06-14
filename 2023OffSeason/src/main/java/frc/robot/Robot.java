@@ -73,6 +73,9 @@ public class Robot extends TimedRobot {
     else if (m_Xbox.getYButton()) {
       frontLeft.setStateAngle270();
     }
+    else if (m_Xbox.getRightBumper()) {
+      frontLeft.setStateMotionMagic();
+    }
     else {
       frontLeft.setStateStop();
     }

@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import java.util.Vector;
 
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -16,7 +17,8 @@ public class SwerveModule extends SubsystemBase{
         Angle0,
         Angle90,
         Angle180,
-        Angle270
+        Angle270,
+        MotionMagic
     }
     SwerveStateMachine state = SwerveStateMachine.Stop;
 
@@ -40,6 +42,10 @@ public class SwerveModule extends SubsystemBase{
 		state = SwerveStateMachine.Angle270;
 	}
 
+    public void setStateMotionMagic() {
+        state = SwerveStateMachine.MotionMagic;
+    }
+
     Vector<Double> targetState = new Vector<Double>();
     Vector<Double> currentState = new Vector<Double>();
     TalonFX driveMotor;
@@ -51,6 +57,24 @@ public class SwerveModule extends SubsystemBase{
     public SwerveModule(double speed, double angle, int driveCanID, int steeringCanID){
         driveMotor = new TalonFX(driveCanID);
         steeringMotor = new TalonFX(steeringCanID);
+
+        steeringMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
+
+        steeringMotor.configNominalOutputForward(0);
+		steeringMotor.configNominalOutputReverse(0);
+		steeringMotor.configPeakOutputForward(1);
+		steeringMotor.configPeakOutputReverse(-1);
+
+        steeringMotor.selectProfileSlot(0, 0);
+		steeringMotor.config_kF(0, 0.2);
+		steeringMotor.config_kP(0, 0.2);
+		steeringMotor.config_kI(0, 0);
+		steeringMotor.config_kD(0, 0);
+
+        steeringMotor.configMotionCruiseVelocity(75, 0);
+        steeringMotor.configMotionAcceleration(30, 0);
+        steeringMotor.configMotionSCurveStrength(0);
+
         this.speed = speed;
         this.angle = angle;
     }
@@ -82,5 +106,10 @@ public class SwerveModule extends SubsystemBase{
             m_SteeringPID.setSetpoint(270);
             steeringMotor.set(TalonFXControlMode.PercentOutput, error);
         }
+        //Steering Motion Magic
+        else if (state.equals(SwerveStateMachine.MotionMagic)) {
+            double nintyDegreesInTicks = (90 * ((2048 * 12.8) / 360));
+            steeringMotor.set(TalonFXControlMode.MotionMagic, nintyDegreesInTicks);
+        }        
     }
 }
