@@ -59,7 +59,7 @@ public class SwerveModule extends SubsystemBase{
         double swerveDegreeAngle = (steeringMotor.getSelectedSensorPosition() % (2048 * 12.8)) * (360 / (2048 * 12.8));
         double error = m_SteeringPID.calculate(swerveDegreeAngle);
         SmartDashboard.putNumber("swerve angle (deg): ", swerveDegreeAngle);
-        SmartDashboard.putNumber("swerve angle: ", steeringMotor.getSelectedSensorPosition());
+        SmartDashboard.putNumber("swerve angle (ticks): ", steeringMotor.getSelectedSensorPosition());
         SmartDashboard.putNumber("swerve velocity: ", driveMotor.getSelectedSensorVelocity());
 
         //Steering PID
