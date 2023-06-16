@@ -52,7 +52,7 @@
 #       see the in-line comments for details.
 #
 #       There are tweaks for specific operating systems such as AIX, CygWin,
-#       Darwin, MinGW, and NonStop.
+#       Darwin, MinGW, and NonStopSteering.
 #
 #   (3) This script is generated from the Groovy template
 #       https://github.com/gradle/gradle/blob/master/subprojects/plugins/src/main/resources/org/gradle/api/internal/plugins/unixStartScript.txt
@@ -106,12 +106,12 @@ die () {
 cygwin=false
 msys=false
 darwin=false
-nonstop=false
+nonStopSteering=false
 case "$( uname )" in                #(
   CYGWIN* )         cygwin=true  ;; #(
   Darwin* )         darwin=true  ;; #(
   MSYS* | MINGW* )  msys=true    ;; #(
-  NONSTOP* )        nonstop=true ;;
+  NONStopSteering* )        nonStopSteering=true ;;
 esac
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
@@ -140,7 +140,7 @@ location of your Java installation."
 fi
 
 # Increase the maximum file descriptors if we can.
-if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
+if ! "$cygwin" && ! "$darwin" && ! "$nonStopSteering" ; then
     case $MAX_FD in #(
       max*)
         MAX_FD=$( ulimit -H -n ) ||
@@ -205,7 +205,7 @@ set -- \
         org.gradle.wrapper.GradleWrapperMain \
         "$@"
 
-# Stop when "xargs" is not available.
+# StopSteering when "xargs" is not available.
 if ! command -v xargs >/dev/null 2>&1
 then
     die "xargs is not available"

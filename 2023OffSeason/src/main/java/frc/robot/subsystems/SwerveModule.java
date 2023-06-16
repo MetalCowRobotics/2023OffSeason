@@ -12,45 +12,53 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveModule extends SubsystemBase{
 
-    public enum SwerveStateMachine {
-        Stop,
+    public enum SteeringSwerveStateMachine {
+        StopSteering,
         Angle0,
         Angle90,
         Angle180,
-        Angle270,
-        MotionMagic
+        Angle270
     }
-    SwerveStateMachine state = SwerveStateMachine.Stop;
+    SteeringSwerveStateMachine steeringState = SteeringSwerveStateMachine.StopSteering;
 
-    public void setStateStop() {
-		state = SwerveStateMachine.Stop;
+    public enum DriveSwerveStateMachine {
+        StopDriving,
+        Driving
+    }
+    DriveSwerveStateMachine drivingState = DriveSwerveStateMachine.StopDriving;
+
+    public void setStateStopSteering() {
+		steeringState = SteeringSwerveStateMachine.StopSteering;
 	}
 
     public void setStateAngle0() {
-		state = SwerveStateMachine.Angle0;
+		steeringState = SteeringSwerveStateMachine.Angle0;
 	}
 
     public void setStateAngle90() {
-		state = SwerveStateMachine.Angle90;
+		steeringState = SteeringSwerveStateMachine.Angle90;
 	}
 
     public void setStateAngle180() {
-		state = SwerveStateMachine.Angle180;
+		steeringState = SteeringSwerveStateMachine.Angle180;
 	}
 
     public void setStateAngle270() {
-		state = SwerveStateMachine.Angle270;
+		steeringState = SteeringSwerveStateMachine.Angle270;
 	}
 
-    public void setStateMotionMagic() {
-        state = SwerveStateMachine.MotionMagic;
+    public void setStateStopDriving() {
+        drivingState = DriveSwerveStateMachine.StopDriving;
+    }
+
+    public void setStateDriving() {
+        drivingState = DriveSwerveStateMachine.Driving;
     }
 
     Vector<Double> targetState = new Vector<Double>();
     Vector<Double> currentState = new Vector<Double>();
     TalonFX driveMotor;
     TalonFX steeringMotor;
-    PIDController m_SteeringPID = new PIDController(0.02, 0, 0);
     double speed;
     double angle;
 
@@ -58,21 +66,34 @@ public class SwerveModule extends SubsystemBase{
         driveMotor = new TalonFX(driveCanID);
         steeringMotor = new TalonFX(steeringCanID);
 
+        driveMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
         steeringMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
 
+        driveMotor.configNominalOutputForward(0);
+		driveMotor.configNominalOutputReverse(0);
+		driveMotor.configPeakOutputForward(1);
+		driveMotor.configPeakOutputReverse(-1);
         steeringMotor.configNominalOutputForward(0);
 		steeringMotor.configNominalOutputReverse(0);
 		steeringMotor.configPeakOutputForward(1);
 		steeringMotor.configPeakOutputReverse(-1);
 
+        driveMotor.selectProfileSlot(0, 0);
+		driveMotor.config_kF(0, 0.005);
+		driveMotor.config_kP(0, 0.005);
+		driveMotor.config_kI(0, 0);
+		driveMotor.config_kD(0, 0);
         steeringMotor.selectProfileSlot(0, 0);
-		steeringMotor.config_kF(0, 0.2);
-		steeringMotor.config_kP(0, 0.2);
+		steeringMotor.config_kF(0, 0.5);
+		steeringMotor.config_kP(0, 0.5);
 		steeringMotor.config_kI(0, 0);
 		steeringMotor.config_kD(0, 0);
 
-        steeringMotor.configMotionCruiseVelocity(75, 0);
-        steeringMotor.configMotionAcceleration(30, 0);
+        driveMotor.configMotionCruiseVelocity(10000,100);
+        driveMotor.configMotionAcceleration(4500, 100);
+        driveMotor.configMotionSCurveStrength(0);
+        steeringMotor.configMotionCruiseVelocity(13000,100);
+        steeringMotor.configMotionAcceleration(6000, 100);
         steeringMotor.configMotionSCurveStrength(0);
 
         this.speed = speed;
@@ -81,35 +102,29 @@ public class SwerveModule extends SubsystemBase{
 
     public void periodic(){
         double swerveDegreeAngle = (steeringMotor.getSelectedSensorPosition() % (2048 * 12.8)) * (360 / (2048 * 12.8));
-        double error = m_SteeringPID.calculate(swerveDegreeAngle);
         SmartDashboard.putNumber("swerve angle (deg): ", swerveDegreeAngle);
         SmartDashboard.putNumber("swerve angle (ticks): ", steeringMotor.getSelectedSensorPosition());
         SmartDashboard.putNumber("swerve velocity: ", driveMotor.getSelectedSensorVelocity());
 
         //Steering PID
-        if (state.equals(SwerveStateMachine.Stop)) {
+        if (steeringState.equals(SteeringSwerveStateMachine.StopSteering)) {
             steeringMotor.set(TalonFXControlMode.PercentOutput, 0);
         }
-        else if (state.equals(SwerveStateMachine.Angle0)) {
-            m_SteeringPID.setSetpoint(0);
-            steeringMotor.set(TalonFXControlMode.PercentOutput, error);
+        else if (steeringState.equals(SteeringSwerveStateMachine.Angle0)) {
+            double degreesInTicks = (0 * ((2048 * 12.8) / 360));
+            steeringMotor.set(TalonFXControlMode.MotionMagic, degreesInTicks);
         }
-        else if (state.equals(SwerveStateMachine.Angle90)) {
-            m_SteeringPID.setSetpoint(90);
-            steeringMotor.set(TalonFXControlMode.PercentOutput, error);
+        else if (steeringState.equals(SteeringSwerveStateMachine.Angle90)) {
+            double degreesInTicks = (90 * ((2048 * 12.8) / 360));
+            steeringMotor.set(TalonFXControlMode.MotionMagic, degreesInTicks);
         }
-        else if (state.equals(SwerveStateMachine.Angle180)) {
-            m_SteeringPID.setSetpoint(180);
-            steeringMotor.set(TalonFXControlMode.PercentOutput, error);
+        else if (steeringState.equals(SteeringSwerveStateMachine.Angle180)) {
+            double degreesInTicks = (180 * ((2048 * 12.8) / 360));
+            steeringMotor.set(TalonFXControlMode.MotionMagic, degreesInTicks);
         }
-        else if (state.equals(SwerveStateMachine.Angle270)) {
-            m_SteeringPID.setSetpoint(270);
-            steeringMotor.set(TalonFXControlMode.PercentOutput, error);
+        else if (steeringState.equals(SteeringSwerveStateMachine.Angle270)) {
+            double degreesInTicks = (270 * ((2048 * 12.8) / 360));
+            steeringMotor.set(TalonFXControlMode.MotionMagic, degreesInTicks);
         }
-        //Steering Motion Magic
-        else if (state.equals(SwerveStateMachine.MotionMagic)) {
-            double nintyDegreesInTicks = (90 * ((2048 * 12.8) / 360));
-            steeringMotor.set(TalonFXControlMode.MotionMagic, nintyDegreesInTicks);
-        }        
     }
 }
