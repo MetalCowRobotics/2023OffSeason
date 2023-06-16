@@ -20,7 +20,7 @@ public class SwerveModule extends SubsystemBase{
     TalonFX steeringMotor;
     double speed;
     double angle;
-    PIDController anglePid = new PIDController(0.005, 0, 0.0);
+    PIDController anglePid = new PIDController(0.007, 0, 0);
     
 
     public SwerveModule(double speed, double angle, int driveCanID, int steeringCanID){
@@ -30,10 +30,11 @@ public class SwerveModule extends SubsystemBase{
         this.speed = speed;
         this.angle = angle;
         anglePid.enableContinuousInput(0, 360);
+        anglePid.setSetpoint(180);
     }
 
     public double getAngle(){
-        double motorAngle = (steeringMotor.getSelectedSensorPosition() / (2048*12.8))*(360/(2048*12.8));
+        double motorAngle = (steeringMotor.getSelectedSensorPosition() % (2048*12.8))*(360/(2048*12.8));
         
         motorAngle %= 360;
 		if (motorAngle < 0){
@@ -50,7 +51,7 @@ public class SwerveModule extends SubsystemBase{
         double angleError = anglePid.calculate(getAngle());
         SmartDashboard.putNumber("swerve angle: ", steeringMotor.getSelectedSensorPosition());
         SmartDashboard.putNumber("swerve velocity: ", driveMotor.getSelectedSensorVelocity());
-        SmartDashboard.putNumber("swerve angle (deg): ", (steeringMotor.getSelectedSensorPosition() / (2048*12.8
+        SmartDashboard.putNumber("swerve angle (deg): ", (steeringMotor.getSelectedSensorPosition() % (2048*12.8
         ))*(360/(2048*12.8)));
         SmartDashboard.putNumber("swerve velocity (m/s)", (638/60)*(2048 / 6.12));
         if(angleError < -1.0){
@@ -59,7 +60,8 @@ public class SwerveModule extends SubsystemBase{
         else if(angleError > 1.0){
             angleError = 1.0;
         }
-        steeringMotor.set(ControlMode.PercentOutput, angleError);}
+        steeringMotor.set(ControlMode.PercentOutput, angleError);
+    }
     }
 
 
