@@ -15,8 +15,11 @@ import frc.robot.subsystems.SwerveModule;
  * project.
  */
 public class Robot extends TimedRobot {
-  SwerveModule frontLeft = new SwerveModule(1,2,10, 11);
   XboxController m_Xbox = new XboxController(0);
+  SwerveModule frontRight = new SwerveModule(0,2,10, 11);
+  SwerveModule frontLeft = new SwerveModule(0,2, 4,5);
+  SwerveModule backLeft = new SwerveModule(0,2,7, 8);
+  SwerveModule backRight = new SwerveModule(0,2,1, 2);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -39,6 +42,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     frontLeft.periodic();
+    frontRight.periodic();
+    backLeft.periodic();
+    backRight.periodic();
     applyOperatorInputs();
   }
 
@@ -63,25 +69,43 @@ public class Robot extends TimedRobot {
   private void applyOperatorInputs() {
     if (m_Xbox.getAButton()) {
       frontLeft.setStateAngle0();
+      frontRight.setStateAngle0();
+      backLeft.setStateAngle0();
+      backRight.setStateAngle0();
     }
     else if (m_Xbox.getBButton()) {
       frontLeft.setStateAngle90();
+      frontRight.setStateAngle90();
+      backLeft.setStateAngle90();
+      backRight.setStateAngle90();
     }
     else if (m_Xbox.getXButton()) {
       frontLeft.setStateAngle180();
+      frontRight.setStateAngle180();
+      backLeft.setStateAngle180();
+      backRight.setStateAngle180();
     }
     else if (m_Xbox.getYButton()) {
       frontLeft.setStateAngle270();
+      frontRight.setStateAngle270();
+      backLeft.setStateAngle270();
+      backRight.setStateAngle270();
     }
     else {
       frontLeft.setStateStopSteering();
+      frontRight.setStateStopSteering();
+      backLeft.setStateStopSteering();
+      backRight.setStateStopSteering();
     }
 
-    if (m_Xbox.getLeftY() != 0) {
-      frontLeft.setStateDriving();
+
+
+    // if (m_Xbox.getLeftY() != 0) {
+    //   frontLeft.setStateDriving();
+    // }
+    // else {
+    //   frontLeft.setStateStopDriving();
+    // }
     }
-    else {
-      frontLeft.setStateStopDriving();
-    }
-    }
+
   }
