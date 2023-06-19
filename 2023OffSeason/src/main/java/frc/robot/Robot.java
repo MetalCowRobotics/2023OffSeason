@@ -16,8 +16,8 @@ import frc.robot.subsystems.SwerveModule;
  */
 public class Robot extends TimedRobot {
   XboxController m_Xbox = new XboxController(0);
-  SwerveModule frontRight = new SwerveModule(0,2,10, 11);
   SwerveModule frontLeft = new SwerveModule(0,2, 4,5);
+  SwerveModule frontRight = new SwerveModule(0,2,10, 11);
   SwerveModule backLeft = new SwerveModule(0,2,7, 8);
   SwerveModule backRight = new SwerveModule(0,2,1, 2);
   /**
@@ -41,10 +41,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    frontLeft.periodic();
-    frontRight.periodic();
-    backLeft.periodic();
-    backRight.periodic();
+    frontLeft.periodic(m_Xbox.getRightX());
+    frontRight.periodic(m_Xbox.getRightX());
+    backLeft.periodic(m_Xbox.getRightX());
+    backRight.periodic(m_Xbox.getRightX());
     applyOperatorInputs();
   }
 
@@ -67,6 +67,7 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void applyOperatorInputs() {
+    //Steering Inputs
     if (m_Xbox.getAButton()) {
       frontLeft.setStateAngle0();
       frontRight.setStateAngle0();
@@ -92,20 +93,20 @@ public class Robot extends TimedRobot {
       backRight.setStateAngle270();
     }
     else {
-      frontLeft.setStateStopSteering();
-      frontRight.setStateStopSteering();
-      backLeft.setStateStopSteering();
-      backRight.setStateStopSteering();
+      frontLeft.setStateRStickSteering();
+      frontRight.setStateRStickSteering();
+      backLeft.setStateRStickSteering();
+      backRight.setStateRStickSteering();
     }
-
-
-
-    // if (m_Xbox.getLeftY() != 0) {
-    //   frontLeft.setStateDriving();
-    // }
-    // else {
-    //   frontLeft.setStateStopDriving();
-    // }
+    //Driving Inputs
+    if (m_Xbox.getLeftBumper()) {
+      frontLeft.setStateVelocity1();
     }
-
+    else if (m_Xbox.getRightBumper()) {
+      frontLeft.setStateVelocity2();
+    }
+    else {
+      frontLeft.setStateVelocity0();
+    }
   }
+}
