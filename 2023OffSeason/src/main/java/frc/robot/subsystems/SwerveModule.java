@@ -134,13 +134,13 @@ public class SwerveModule extends SubsystemBase{
 
         //Driving
         if (drivingState.equals(DrivingSwerveStateMachine.Velocity0)) {
-            steeringMotor.set(TalonFXControlMode.Velocity, 0);
+            driveMotor.set(TalonFXControlMode.Velocity, 0);
         }
         else if (drivingState.equals(DrivingSwerveStateMachine.Velocity1)) {
-            steeringMotor.set(TalonFXControlMode.Velocity, 1000);
+            driveMotor.set(TalonFXControlMode.Velocity, 1000);
         }
         else if (drivingState.equals(DrivingSwerveStateMachine.Velocity2)) {
-            steeringMotor.set(TalonFXControlMode.Velocity, 2500);
+            driveMotor.set(TalonFXControlMode.Velocity, 2500);
         }
     }
 }
