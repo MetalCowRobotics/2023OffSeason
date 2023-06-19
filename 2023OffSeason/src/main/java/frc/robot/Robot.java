@@ -6,6 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.subsystems.SwerveModule;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DriverStation;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -20,7 +22,9 @@ public class Robot extends TimedRobot {
    * initialization code.
    */
   @Override
-  public void robotInit() {}
+  public void robotInit() {
+    
+  }
 
   @Override
   public void robotPeriodic() {}
@@ -36,7 +40,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    DataLogManager.start();
+    DriverStation.startDataLog(DataLogManager.getLog());
     frontLeft.periodic();
+
   }
 
   @Override

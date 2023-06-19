@@ -21,6 +21,7 @@ public class SwerveModule extends SubsystemBase{
     double speed;
     double angle;
     PIDController anglePid = new PIDController(0.007, 0, 0);
+    PIDController speedPid = new PIDController(0.007, 0, 0);
     
 
     public SwerveModule(double speed, double angle, int driveCanID, int steeringCanID){
@@ -31,6 +32,7 @@ public class SwerveModule extends SubsystemBase{
         this.angle = angle;
         anglePid.enableContinuousInput(0, 360);
         anglePid.setSetpoint(180);
+        speedPid.setSetpoint(.4);
     }
 
     public double getAngle(){
@@ -57,7 +59,7 @@ public class SwerveModule extends SubsystemBase{
         if(angleError < -1.0){
             angleError = -1.0;
         }
-        else if(angleError > 1.0){
+        if(angleError > 1.0){
             angleError = 1.0;
         }
         steeringMotor.set(ControlMode.PercentOutput, angleError);
