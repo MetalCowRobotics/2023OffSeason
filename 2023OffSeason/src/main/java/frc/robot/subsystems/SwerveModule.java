@@ -1,13 +1,14 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import java.util.Vector;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveModule extends SubsystemBase{
@@ -48,36 +49,35 @@ public class SwerveModule extends SubsystemBase{
 		steeringState = SteeringSwerveStateMachine.Angle270;
 	}
 
-    public void setStateVelocity0() {
-        drivingState = DrivingSwerveStateMachine.Velocity0;
-    }
-
-    public void setStateVelocity1() {
-        drivingState = DrivingSwerveStateMachine.Velocity1;
-    }
-
-    public void setStateVelocity2() {
-        drivingState = DrivingSwerveStateMachine.Velocity2;
-    }
-
     Vector<Double> targetState = new Vector<Double>();
     Vector<Double> currentState = new Vector<Double>();
     TalonFX driveMotor;
     TalonFX steeringMotor;
+    double targetRPM;
+    double targetAngle;
     double speed;
     double angle;
+
+    public void setTargetAngle(double Angle) {
+        targetAngle = (Angle * ((2048 * 12.8) / 360));
+    }
+
+    public void setTargetRPM(double RPM) {
+        targetRPM = (((RPM * 2048) / 600));
+    }
 
     public SwerveModule(double speed, double angle, int driveCanID, int steeringCanID){
         driveMotor = new TalonFX(driveCanID);
         steeringMotor = new TalonFX(steeringCanID);
+        driveMotor.setNeutralMode(NeutralMode.Coast);
 
         driveMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
         steeringMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
 
         driveMotor.configNominalOutputForward(0);
 		driveMotor.configNominalOutputReverse(0);
-		driveMotor.configPeakOutputForward(0.75);
-		driveMotor.configPeakOutputReverse(-0.75);
+		driveMotor.configPeakOutputForward(1);
+		driveMotor.configPeakOutputReverse(-1);
 
         steeringMotor.configNominalOutputForward(0);
 		steeringMotor.configNominalOutputReverse(0);
@@ -85,8 +85,8 @@ public class SwerveModule extends SubsystemBase{
 		steeringMotor.configPeakOutputReverse(-1);
 
         driveMotor.selectProfileSlot(0, 0);
-		driveMotor.config_kF(0, 0.02);
-		driveMotor.config_kP(0, 0.02);
+		driveMotor.config_kF(0, (1023.0/20660.0));
+		driveMotor.config_kP(0, 0.17);
 		driveMotor.config_kI(0, 0);
 		driveMotor.config_kD(0, 0);
 
@@ -104,43 +104,45 @@ public class SwerveModule extends SubsystemBase{
         this.angle = angle;
     }
 
-    public void periodic(double angleSpeed){
+    public void periodic(){
         double swerveDegreeAngle = (steeringMotor.getSelectedSensorPosition() % (2048 * 12.8)) * (360 / (2048 * 12.8));
         SmartDashboard.putNumber("swerve angle (deg): ", swerveDegreeAngle);
         SmartDashboard.putNumber("swerve angle (ticks): ", steeringMotor.getSelectedSensorPosition());
-        SmartDashboard.putNumber("swerve velocity: ", driveMotor.getSelectedSensorVelocity());
-        double percentAngleSpeed = angleSpeed * 0.20;
+        SmartDashboard.putNumber("swerve velocity (ticks): ", driveMotor.getSelectedSensorVelocity());
+        SmartDashboard.putNumber("swerve velocity (m/s): ", (driveMotor.getSelectedSensorVelocity() * 600) / 2048);
+        // double percentAngleSpeed = angleSpeed * 0.20;
 
-        //Steering 
-        if (steeringState.equals(SteeringSwerveStateMachine.RStickSteering)) {
-            steeringMotor.set(TalonFXControlMode.PercentOutput, percentAngleSpeed);
-        }
-        else if (steeringState.equals(SteeringSwerveStateMachine.Angle0)) {
-            double degreesInTicks = (0 * ((2048 * 12.8) / 360));
-            steeringMotor.set(TalonFXControlMode.MotionMagic, degreesInTicks);
-        }
-        else if (steeringState.equals(SteeringSwerveStateMachine.Angle90)) {
-            double degreesInTicks = (90 * ((2048 * 12.8) / 360));
-            steeringMotor.set(TalonFXControlMode.MotionMagic, degreesInTicks);
-        }
-        else if (steeringState.equals(SteeringSwerveStateMachine.Angle180)) {
-            double degreesInTicks = (180 * ((2048 * 12.8) / 360));
-            steeringMotor.set(TalonFXControlMode.MotionMagic, degreesInTicks);
-        }
-        else if (steeringState.equals(SteeringSwerveStateMachine.Angle270)) {
-            double degreesInTicks = (270 * ((2048 * 12.8) / 360));
-            steeringMotor.set(TalonFXControlMode.MotionMagic, degreesInTicks);
-        }
+        //Steering
+        steeringMotor.set(TalonFXControlMode.MotionMagic, targetAngle);
+        // if (steeringState.equals(SteeringSwerveStateMachine.RStickSteering)) {
+        //     steeringMotor.set(TalonFXControlMode.PercentOutput, 0);
+        // }
+        // else if (steeringState.equals(SteeringSwerveStateMachine.Angle0)) {
+        //     double degreesInTicks = (0 * ((2048 * 12.8) / 360));
+        //     steeringMotor.set(TalonFXControlMode.MotionMagic, degreesInTicks);
+        // }
+        // else if (steeringState.equals(SteeringSwerveStateMachine.Angle90)) {
+        //     double degreesInTicks = (90 * ((2048 * 12.8) / 360));
+        //     steeringMotor.set(TalonFXControlMode.MotionMagic, degreesInTicks);
+        // }
+        // else if (steeringState.equals(SteeringSwerveStateMachine.Angle180)) {
+        //     double degreesInTicks = (180 * ((2048 * 12.8) / 360));
+        //     steeringMotor.set(TalonFXControlMode.MotionMagic, degreesInTicks);
+        // }
+        // else if (steeringState.equals(SteeringSwerveStateMachine.Angle270)) {
+        //     double degreesInTicks = (270 * ((2048 * 12.8) / 360));
+        //     steeringMotor.set(TalonFXControlMode.MotionMagic, degreesInTicks);
+        // }
 
         //Driving
-        if (drivingState.equals(DrivingSwerveStateMachine.Velocity0)) {
-            driveMotor.set(TalonFXControlMode.Velocity, 0);
-        }
-        else if (drivingState.equals(DrivingSwerveStateMachine.Velocity1)) {
-            driveMotor.set(TalonFXControlMode.Velocity, 1000);
-        }
-        else if (drivingState.equals(DrivingSwerveStateMachine.Velocity2)) {
-            driveMotor.set(TalonFXControlMode.Velocity, 2500);
-        }
+        driveMotor.set(TalonFXControlMode.Velocity, targetRPM);
+        // if (drivingState.equals(DrivingSwerveStateMachine.Velocity0)) {
+        // }
+        // else if (drivingState.equals(DrivingSwerveStateMachine.Velocity1)) {
+            // driveMotor.set(TalonFXControlMode.Velocity, 1000);
+        // }
+        // else if (drivingState.equals(DrivingSwerveStateMachine.Velocity2)) {
+            // driveMotor.set(TalonFXControlMode.Velocity, 2500);
+        // }
     }
 }

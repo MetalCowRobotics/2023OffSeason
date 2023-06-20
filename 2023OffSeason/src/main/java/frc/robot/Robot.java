@@ -41,10 +41,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    frontLeft.periodic(m_Xbox.getRightX());
-    frontRight.periodic(m_Xbox.getRightX());
-    backLeft.periodic(m_Xbox.getRightX());
-    backRight.periodic(m_Xbox.getRightX());
+    frontLeft.periodic();
+    frontRight.periodic();
+    backLeft.periodic();
+    backRight.periodic();
     applyOperatorInputs();
   }
 
@@ -67,6 +67,18 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void applyOperatorInputs() {
+    // frontLeft.setTargetRPM(m_Xbox.getLeftY());
+    // frontRight.setTargetRPM(m_Xbox.getLeftY());
+    // backLeft.setTargetRPM(m_Xbox.getLeftY());
+    // backRight.setTargetRPM(m_Xbox.getLeftY());
+
+    frontLeft.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightY(), m_Xbox.getRightX()))) + 180);
+    frontRight.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightY(), m_Xbox.getRightX()))) + 180);
+    backLeft.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightY(), m_Xbox.getRightX()))) + 180);
+    backRight.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightY(), m_Xbox.getRightX()))) + 180);
+
+    
+
     //Steering Inputs
     if (m_Xbox.getAButton()) {
       frontLeft.setStateAngle0();
@@ -97,16 +109,6 @@ public class Robot extends TimedRobot {
       frontRight.setStateRStickSteering();
       backLeft.setStateRStickSteering();
       backRight.setStateRStickSteering();
-    }
-    //Driving Inputs
-    if (m_Xbox.getLeftBumper()) {
-      frontLeft.setStateVelocity1();
-    }
-    else if (m_Xbox.getRightBumper()) {
-      frontLeft.setStateVelocity2();
-    }
-    else {
-      frontLeft.setStateVelocity0();
     }
   }
 }
