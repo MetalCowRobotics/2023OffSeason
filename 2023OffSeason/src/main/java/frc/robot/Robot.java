@@ -41,11 +41,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    applyOperatorInputs();
     frontLeft.periodic();
     frontRight.periodic();
     backLeft.periodic();
     backRight.periodic();
-    applyOperatorInputs();
   }
 
   @Override
@@ -67,48 +67,16 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void applyOperatorInputs() {
-    // frontLeft.setTargetRPM(m_Xbox.getLeftY());
-    // frontRight.setTargetRPM(m_Xbox.getLeftY());
-    // backLeft.setTargetRPM(m_Xbox.getLeftY());
-    // backRight.setTargetRPM(m_Xbox.getLeftY());
 
     frontLeft.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightY(), m_Xbox.getRightX()))) + 180);
     frontRight.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightY(), m_Xbox.getRightX()))) + 180);
     backLeft.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightY(), m_Xbox.getRightX()))) + 180);
     backRight.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightY(), m_Xbox.getRightX()))) + 180);
 
-    
+    frontLeft.setTargetRPM(m_Xbox.getLeftY() * 500);
+    frontRight.setTargetRPM(m_Xbox.getLeftY() * 500);
+    backLeft.setTargetRPM(m_Xbox.getLeftY() * 500);
+    backRight.setTargetRPM(m_Xbox.getLeftY() * 500);
 
-    //Steering Inputs
-    if (m_Xbox.getAButton()) {
-      frontLeft.setStateAngle0();
-      frontRight.setStateAngle0();
-      backLeft.setStateAngle0();
-      backRight.setStateAngle0();
-    }
-    else if (m_Xbox.getBButton()) {
-      frontLeft.setStateAngle90();
-      frontRight.setStateAngle90();
-      backLeft.setStateAngle90();
-      backRight.setStateAngle90();
-    }
-    else if (m_Xbox.getXButton()) {
-      frontLeft.setStateAngle180();
-      frontRight.setStateAngle180();
-      backLeft.setStateAngle180();
-      backRight.setStateAngle180();
-    }
-    else if (m_Xbox.getYButton()) {
-      frontLeft.setStateAngle270();
-      frontRight.setStateAngle270();
-      backLeft.setStateAngle270();
-      backRight.setStateAngle270();
-    }
-    else {
-      frontLeft.setStateRStickSteering();
-      frontRight.setStateRStickSteering();
-      backLeft.setStateRStickSteering();
-      backRight.setStateRStickSteering();
-    }
   }
 }
