@@ -73,10 +73,10 @@ public class Robot extends TimedRobot {
     backLeft.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightX(), m_Xbox.getRightY()))) + 180);
     backRight.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightX(), m_Xbox.getRightY()))) + 180);
 
-    frontLeft.setTargetRPM(m_Xbox.getLeftY() * 500);
-    frontRight.setTargetRPM(m_Xbox.getLeftY() * 500);
-    backLeft.setTargetRPM(m_Xbox.getLeftY() * 500);
-    backRight.setTargetRPM(m_Xbox.getLeftY() * 500);
+    frontLeft.setTargetRPM(m_Xbox.getLeftY() * 638);
+    frontRight.setTargetRPM(m_Xbox.getLeftY() * 638);
+    backLeft.setTargetRPM(m_Xbox.getLeftY() * 638);
+    backRight.setTargetRPM(m_Xbox.getLeftY() * 638);
 
   }
 }

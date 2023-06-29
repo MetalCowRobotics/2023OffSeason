@@ -27,7 +27,7 @@ public class SwerveModule extends SubsystemBase{
     }
 
     public void setTargetRPM(double RPM) {
-        targetRPM = (((RPM * 2048) / 600));
+        targetRPM = ((RPM * 2048) / 600);
     }
 
     public SwerveModule(double speed, double angle, int driveCanID, int steeringCanID){
