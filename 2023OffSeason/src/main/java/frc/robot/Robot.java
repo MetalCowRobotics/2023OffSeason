@@ -68,10 +68,10 @@ public class Robot extends TimedRobot {
 
   private void applyOperatorInputs() {
 
-    frontLeft.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightY(), m_Xbox.getRightX()))) + 180);
-    frontRight.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightY(), m_Xbox.getRightX()))) + 180);
-    backLeft.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightY(), m_Xbox.getRightX()))) + 180);
-    backRight.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightY(), m_Xbox.getRightX()))) + 180);
+    frontLeft.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightX(), m_Xbox.getRightY()))) + 180);
+    frontRight.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightX(), m_Xbox.getRightY()))) + 180);
+    backLeft.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightX(), m_Xbox.getRightY()))) + 180);
+    backRight.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightX(), m_Xbox.getRightY()))) + 180);
 
     frontLeft.setTargetRPM(m_Xbox.getLeftY() * 500);
     frontRight.setTargetRPM(m_Xbox.getLeftY() * 500);
