@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveModule extends SubsystemBase{
@@ -21,13 +22,23 @@ public class SwerveModule extends SubsystemBase{
     double targetAngle;
     double speed;
     double angle;
+    SlewRateLimiter limiterRPM;
+    SlewRateLimiter limiterAngle;
+    
 
     public void setTargetAngle(double Angle) {
         targetAngle = (Angle * ((2048 * 12.8) / 360));
+        targetAngle = limiterAngle.calculate(targetAngle);
     }
 
     public void setTargetRPM(double RPM) {
         targetRPM = ((RPM * 2048) / 600);
+        targetRPM = limiterRPM.calculate(targetRPM);
+    }
+
+    public void resetEncoders() {
+        driveMotor.setSelectedSensorPosition(0);
+        steeringMotor.setSelectedSensorPosition(0);
     }
 
     public SwerveModule(double speed, double angle, int driveCanID, int steeringCanID){
@@ -61,14 +72,21 @@ public class SwerveModule extends SubsystemBase{
 
         this.speed = speed;
         this.angle = angle;
+
+        this.limiterRPM = new SlewRateLimiter(0);
+        this.limiterAngle = new SlewRateLimiter(0);
+
+        resetEncoders();
     }
 
     public void periodic(){
         double swerveDegreeAngle = (steeringMotor.getSelectedSensorPosition() % (2048 * 12.8)) * (360 / (2048 * 12.8));
-        SmartDashboard.putNumber("swerve angle (deg): ", swerveDegreeAngle);
+
         SmartDashboard.putNumber("swerve angle (ticks): ", steeringMotor.getSelectedSensorPosition());
+        SmartDashboard.putNumber("swerve angle (deg): ", swerveDegreeAngle);
+
         SmartDashboard.putNumber("swerve velocity (ticks): ", driveMotor.getSelectedSensorVelocity());
-        SmartDashboard.putNumber("swerve velocity (m/s): ", (driveMotor.getSelectedSensorVelocity() * 600) / 2048);
+        SmartDashboard.putNumber("swerve velocity (RPM): ", (driveMotor.getSelectedSensorVelocity() * 600) / 2048);
 
         //Steering
         steeringMotor.set(TalonFXControlMode.Position, targetAngle);
