@@ -73,8 +73,8 @@ public class SwerveModule extends SubsystemBase{
         this.speed = speed;
         this.angle = angle;
 
-        this.limiterRPM = new SlewRateLimiter(0);
-        this.limiterAngle = new SlewRateLimiter(0);
+        this.limiterRPM = new SlewRateLimiter(3);
+        this.limiterAngle = new SlewRateLimiter(3);
 
         resetEncoders();
     }
