@@ -6,7 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.subsystems.SwerveModule;
+import frc.robot.subsystems.Swerve;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -16,10 +16,7 @@ import frc.robot.subsystems.SwerveModule;
  */
 public class Robot extends TimedRobot {
   XboxController m_Xbox = new XboxController(0);
-  SwerveModule frontLeft = new SwerveModule(0,2, 4,5);
-  SwerveModule frontRight = new SwerveModule(0,2,10, 11);
-  SwerveModule backLeft = new SwerveModule(0,2,7, 8);
-  SwerveModule backRight = new SwerveModule(0,2,1, 2);
+  Swerve mSwerve;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -28,7 +25,10 @@ public class Robot extends TimedRobot {
   public void robotInit() {}
 
   @Override
-  public void robotPeriodic() {}
+  public void robotPeriodic() {
+    applyOperatorInputs();
+    mSwerve.periodic();
+  }
 
   @Override
   public void autonomousInit() {}
@@ -40,13 +40,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {}
 
   @Override
-  public void teleopPeriodic() {
-    applyOperatorInputs();
-    frontLeft.periodic();
-    frontRight.periodic();
-    backLeft.periodic();
-    backRight.periodic();
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void disabledInit() {}
@@ -67,16 +61,8 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void applyOperatorInputs() {
-
-    frontLeft.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightX(), m_Xbox.getRightY()))) + 180);
-    frontRight.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightX(), m_Xbox.getRightY()))) + 180);
-    backLeft.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightX(), m_Xbox.getRightY()))) + 180);
-    backRight.setTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getRightX(), m_Xbox.getRightY()))) + 180);
-
-    frontLeft.setTargetRPM(m_Xbox.getLeftY() * 638);
-    frontRight.setTargetRPM(m_Xbox.getLeftY() * 638);
-    backLeft.setTargetRPM(m_Xbox.getLeftY() * 638);
-    backRight.setTargetRPM(m_Xbox.getLeftY() * 638);
+    mSwerve.masterSetTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getLeftX(), m_Xbox.getLeftY()))) + 180);
+    mSwerve.masterSetTargetRPM(Math.hypot(m_Xbox.getLeftX(), m_Xbox.getLeftY()) * 638);
 
   }
 }

@@ -8,8 +8,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.sensors.CANCoder;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SwerveModule extends SubsystemBase{
@@ -18,32 +18,35 @@ public class SwerveModule extends SubsystemBase{
     Vector<Double> currentState = new Vector<Double>();
     TalonFX driveMotor;
     TalonFX steeringMotor;
+    CANCoder absoluteEncoder;
     double targetRPM;
     double targetAngle;
     double speed;
     double angle;
-    SlewRateLimiter limiterRPM;
-    SlewRateLimiter limiterAngle;
-    
+    String moduleName;
+    double angleOffSet;
 
     public void setTargetAngle(double Angle) {
-        targetAngle = (Angle * ((2048 * 12.8) / 360));
-        targetAngle = limiterAngle.calculate(targetAngle);
+        targetAngle = ((Angle) * ((2048 * 12.8) / 360));
     }
 
     public void setTargetRPM(double RPM) {
         targetRPM = ((RPM * 2048) / 600);
-        targetRPM = limiterRPM.calculate(targetRPM);
     }
 
     public void resetEncoders() {
         driveMotor.setSelectedSensorPosition(0);
-        steeringMotor.setSelectedSensorPosition(0);
+        steeringMotor.setSelectedSensorPosition((absoluteEncoder.getAbsolutePosition() - angleOffSet) * ((2048 * 12.8) / 360));
     }
 
-    public SwerveModule(double speed, double angle, int driveCanID, int steeringCanID){
+    public SwerveModule(double speed, double angle, int driveCanID, int steeringCanID, int absoluteEncoderCanID, double offSet, String name){
         driveMotor = new TalonFX(driveCanID);
         steeringMotor = new TalonFX(steeringCanID);
+        absoluteEncoder = new CANCoder(absoluteEncoderCanID);
+        angleOffSet = offSet;
+        moduleName = name;
+
+        // steeringMotor.configIntegratedSensorOffset((absoluteEncoder.getAbsolutePosition() - offSet) * -12.8);
         driveMotor.setNeutralMode(NeutralMode.Coast);
 
         driveMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
@@ -73,9 +76,6 @@ public class SwerveModule extends SubsystemBase{
         this.speed = speed;
         this.angle = angle;
 
-        this.limiterRPM = new SlewRateLimiter(2000, -2000, 0);
-        this.limiterAngle = new SlewRateLimiter(2560, -2560, 0);
-
         resetEncoders();
     }
 
@@ -87,6 +87,10 @@ public class SwerveModule extends SubsystemBase{
 
         SmartDashboard.putNumber("swerve velocity (ticks): ", driveMotor.getSelectedSensorVelocity());
         SmartDashboard.putNumber("swerve velocity (RPM): ", (driveMotor.getSelectedSensorVelocity() * 600) / 2048);
+
+        SmartDashboard.putNumber(moduleName + " Position", absoluteEncoder.getAbsolutePosition() - angleOffSet);
+
+        SmartDashboard.putNumber(moduleName + " Raw Position", absoluteEncoder.getAbsolutePosition());
 
         //Steering
         steeringMotor.set(TalonFXControlMode.Position, targetAngle);
