@@ -46,7 +46,6 @@ public class SwerveModule extends SubsystemBase{
         angleOffSet = offSet;
         moduleName = name;
 
-        // steeringMotor.configIntegratedSensorOffset((absoluteEncoder.getAbsolutePosition() - offSet) * -12.8);
         driveMotor.setNeutralMode(NeutralMode.Coast);
 
         driveMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);

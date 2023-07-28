@@ -63,6 +63,5 @@ public class Robot extends TimedRobot {
   private void applyOperatorInputs() {
     mSwerve.masterSetTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getLeftX(), m_Xbox.getLeftY()))) + 180);
     mSwerve.masterSetTargetRPM(Math.hypot(m_Xbox.getLeftX(), m_Xbox.getLeftY()) * 638);
-
   }
 }
