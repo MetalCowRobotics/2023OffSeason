@@ -82,6 +82,6 @@ public class DriveTrain extends SubsystemBase{
         driveMotor1.set(TalonSRXControlMode.PercentOutput, (((throttleValue + turningValue) / 2) * 0.6) * speedMultiplier);
         driveMotor2.set(TalonSRXControlMode.PercentOutput, (((throttleValue + turningValue) / 2) * 0.6) * speedMultiplier);
         driveMotor3.set(TalonSRXControlMode.PercentOutput, (((throttleValue - turningValue) / 2) * 0.6) * speedMultiplier);
-        driveMotor4.set(TalonSRXControlMode.PercentOutput, (((throttleValue - turningValue) / 2) * 0.6) * speedMultiplier);        driveMotor4.set(TalonSRXControlMode.PercentOutput, ((throttleValue + turningValue) / 2) * 0.6);
+        driveMotor4.set(TalonSRXControlMode.PercentOutput, (((throttleValue - turningValue) / 2) * 0.6) * speedMultiplier);
     }
 }
