@@ -6,7 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.subsystems.Swerve;
+import frc.robot.subsystems.DriveTrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -15,8 +15,10 @@ import frc.robot.subsystems.Swerve;
  * project.
  */
 public class Robot extends TimedRobot {
-  XboxController m_Xbox = new XboxController(0);
-  Swerve mSwerve;
+
+  XboxController driverController = new XboxController(0);
+  DriveTrain m_DriveTrain = new DriveTrain();
+  
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -26,8 +28,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    applyOperatorInputs();
-    mSwerve.periodic();
+    applyDriverInputs();
+    m_DriveTrain.periodic();
   }
 
   @Override
@@ -60,8 +62,8 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationPeriodic() {}
 
-  private void applyOperatorInputs() {
-    mSwerve.masterSetTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getLeftX(), m_Xbox.getLeftY()))) + 180);
-    mSwerve.masterSetTargetRPM(Math.hypot(m_Xbox.getLeftX(), m_Xbox.getLeftY()) * 638);
+  private void applyDriverInputs() {
+    m_DriveTrain.getCrawlOrSprint(driverController.getLeftTriggerAxis(), driverController.getRightTriggerAxis());
+    m_DriveTrain.getJoystickInputs(driverController.getLeftY(), driverController.getRightX());
   }
 }
