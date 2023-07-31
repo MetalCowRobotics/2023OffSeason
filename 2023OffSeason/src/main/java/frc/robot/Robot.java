@@ -6,6 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.Swerve;
 
 /**
@@ -16,7 +18,15 @@ import frc.robot.subsystems.Swerve;
  */
 public class Robot extends TimedRobot {
   XboxController m_Xbox = new XboxController(0);
-  Swerve mSwerve;
+  Swerve m_Swerve;
+  TeleopSwerve m_TeleopSwerve;
+
+  private final int translationAxis = XboxController.Axis.kLeftY.value;
+  private final int strafeAxis = XboxController.Axis.kLeftX.value;
+  private final int rotationAxis = XboxController.Axis.kRightX.value;
+
+  private final JoystickButton robotCentric = new JoystickButton(m_Xbox, XboxController.Button.kLeftBumper.value);
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -27,7 +37,14 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     applyOperatorInputs();
-    mSwerve.periodic();
+    m_TeleopSwerve.periodic(
+      m_Swerve,
+      -m_Xbox.getRawAxis(translationAxis),
+      -m_Xbox.getRawAxis(strafeAxis),
+      -m_Xbox.getRawAxis(rotationAxis),
+      robotCentric.getAsBoolean()
+      );
+    
   }
 
   @Override
@@ -40,7 +57,9 @@ public class Robot extends TimedRobot {
   public void teleopInit() {}
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+
+  }
 
   @Override
   public void disabledInit() {}
@@ -61,7 +80,5 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void applyOperatorInputs() {
-    mSwerve.masterSetTargetAngle((Math.toDegrees(Math.atan2(m_Xbox.getLeftX(), m_Xbox.getLeftY()))) + 180);
-    mSwerve.masterSetTargetRPM(Math.hypot(m_Xbox.getLeftX(), m_Xbox.getLeftY()) * 638);
   }
 }
