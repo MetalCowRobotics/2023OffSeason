@@ -24,8 +24,8 @@ public class DriveTrain extends SubsystemBase{
 
         /* Sets one side Inverted to Drive in same Direction */
         driveMotor1.setInverted(false);
-        driveMotor2.setInverted(false);
-        driveMotor3.setInverted(true);
+        driveMotor2.setInverted(true);
+        driveMotor3.setInverted(false);
         driveMotor4.setInverted(true);
 
         /* PIDF Loops for Later Config */
@@ -58,15 +58,15 @@ public class DriveTrain extends SubsystemBase{
     public void getCrawlOrSprint(double leftTrigger, double rightTrigger) {
         if (leftTrigger > 0.8) {
             /* Crawl */
-            speedMultiplier = 0.5;
+            speedMultiplier = 0.25;
         }
         else if (rightTrigger > 0.8) {
             /* Sprint */
-            speedMultiplier = 1.3;
+            speedMultiplier = 0.9;
         }
         else {
             /* Normal */
-            speedMultiplier = 1.0;
+            speedMultiplier = 0.5;
         }
     }
 
@@ -79,9 +79,9 @@ public class DriveTrain extends SubsystemBase{
     public void periodic() {
 
         /* Tank Drive Based Driving */
-        driveMotor1.set(TalonSRXControlMode.PercentOutput, (((throttleValue + turningValue) / 2) * 0.6) * speedMultiplier);
-        driveMotor2.set(TalonSRXControlMode.PercentOutput, (((throttleValue + turningValue) / 2) * 0.6) * speedMultiplier);
-        driveMotor3.set(TalonSRXControlMode.PercentOutput, (((throttleValue - turningValue) / 2) * 0.6) * speedMultiplier);
-        driveMotor4.set(TalonSRXControlMode.PercentOutput, (((throttleValue - turningValue) / 2) * 0.6) * speedMultiplier);
+        driveMotor1.set(TalonSRXControlMode.PercentOutput, (((throttleValue + turningValue) / 2)) * speedMultiplier);
+        driveMotor2.set(TalonSRXControlMode.PercentOutput, (((throttleValue - turningValue) / 2)) * speedMultiplier);
+        driveMotor3.set(TalonSRXControlMode.PercentOutput, (((-throttleValue + turningValue) / 2)) * speedMultiplier);
+        driveMotor4.set(TalonSRXControlMode.PercentOutput, (((-throttleValue - turningValue) / 2)) * speedMultiplier);
     }
 }
