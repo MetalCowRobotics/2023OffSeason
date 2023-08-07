@@ -4,10 +4,13 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
-import frc.robot.subsystems.SwerveModule;
 import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.subsystems.DriveTrain;
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -16,15 +19,15 @@ import edu.wpi.first.wpilibj.DriverStation;
  * project.
  */
 public class Robot extends TimedRobot {
-  SwerveModule frontLeft = new SwerveModule(1,2,10, 11);
+ 
+  DriveTrain driveTrain = new DriveTrain();
+  XboxController box = new XboxController(0);
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
-  public void robotInit() {
-    
-  }
+  public void robotInit() {}
 
   @Override
   public void robotPeriodic() {}
@@ -38,11 +41,20 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {}
 
+
+
+  
+
   @Override
   public void teleopPeriodic() {
-    DataLogManager.start();
-    DriverStation.startDataLog(DataLogManager.getLog());
-    frontLeft.periodic();
+
+  System.out.println(box.getLeftX());
+  /*backRight.setVelocity(driveSpeed);
+  backRight.setAngle(steerAngle);*/
+  driveTrain.setLeftSpeed((Math.pow(box.getLeftY(),3)+Math.pow(box.getRightX(),3))/2);
+  driveTrain.setRightSpeed(-(Math.pow(box.getLeftY(),3)-Math.pow(box.getRightX(),3))/2);
+
+  driveTrain.periodic();
 
   }
 
@@ -63,4 +75,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {}
-}
+
+  private void applyOperatorInputs() {}
+  
+  }
