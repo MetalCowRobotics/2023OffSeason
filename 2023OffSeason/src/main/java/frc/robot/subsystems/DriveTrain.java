@@ -5,12 +5,14 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.Timer;
 
 public class DriveTrain {
 
     ADIS16470_IMU gyro = new ADIS16470_IMU();
     PIDController pid = new PIDController(.05, 0, 0);
 
+    Timer time = new Timer();
 
     double leftSpeed;
     double rightSpeed;
@@ -52,7 +54,8 @@ public void periodic(){
 
     System.out.println(gyro.getAngle());
 
-
+    System.out.println(time.getFPGATimestamp());
+    
 }
 
 
