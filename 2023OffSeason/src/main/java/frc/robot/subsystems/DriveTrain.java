@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.function.Function;
+
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -22,9 +24,18 @@ public class DriveTrain {
     TalonSRX rightcontroller1 = new TalonSRX(2);
     TalonSRX rightcontroller2 = new TalonSRX(3);
 
-    public void setLeftSpeed(double val){
 
+    public void setLeftSpeed(double val){
+        
         leftSpeed = val;
+        if (leftSpeed>1){
+            leftSpeed = 1;
+        }
+        if (leftSpeed<-1){
+            leftSpeed = -1;
+        }
+
+        System.out.println(leftSpeed);
         //leftcontroller1.set(TalonSRXControlMode.PercentOutput, val);
         //leftcontroller2.set(TalonSRXControlMode.PercentOutput, val);
 
@@ -32,6 +43,13 @@ public class DriveTrain {
     public void setRightSpeed(double val){
 
         rightSpeed = val;
+        if (rightSpeed>1){
+            rightSpeed = 1;
+        }
+        if (rightSpeed<-1){
+            rightSpeed = -1;
+        }
+        System.out.println(rightSpeed);
         //rightcontroller1.set(TalonSRXControlMode.PercentOutput, val);
         //rightcontroller2.set(TalonSRXControlMode.PercentOutput, val);
 
@@ -42,15 +60,15 @@ public void periodic(){
 
     double pidstore = -(pid.calculate(gyro.getAngle()));
 
-    /*leftcontroller1.set(TalonSRXControlMode.PercentOutput, leftSpeed);
+    leftcontroller1.set(TalonSRXControlMode.PercentOutput, leftSpeed);
     leftcontroller2.set(TalonSRXControlMode.PercentOutput, leftSpeed);
-    rightcontroller1.set(TalonSRXControlMode.PercentOutput, rightSpeed);
-    rightcontroller2.set(TalonSRXControlMode.PercentOutput, rightSpeed);*/
+    rightcontroller1.set(TalonSRXControlMode.PercentOutput, -rightSpeed);
+    rightcontroller2.set(TalonSRXControlMode.PercentOutput, -rightSpeed);
 
-    leftcontroller1.set(TalonSRXControlMode.PercentOutput, pidstore);
+    /*leftcontroller1.set(TalonSRXControlMode.PercentOutput, pidstore);
     leftcontroller2.set(TalonSRXControlMode.PercentOutput, pidstore);
     rightcontroller1.set(TalonSRXControlMode.PercentOutput, pidstore);
-    rightcontroller2.set(TalonSRXControlMode.PercentOutput, pidstore);
+    rightcontroller2.set(TalonSRXControlMode.PercentOutput, pidstore);*/
 
     System.out.println(gyro.getAngle());
 

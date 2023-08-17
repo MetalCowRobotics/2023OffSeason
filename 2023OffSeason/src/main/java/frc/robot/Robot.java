@@ -6,10 +6,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.DriveTrain;
+
+import java.util.function.Function;
+
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 
 /**
@@ -22,6 +26,14 @@ public class Robot extends TimedRobot {
  
   DriveTrain driveTrain = new DriveTrain();
   XboxController box = new XboxController(0);
+
+  Timer time = new Timer();
+
+  Function<Double,Double> r = (t) -> Math.pow(t,2);
+  Function<Double,Double> rprime = (x) -> 2*x;
+  Function<Double,Double> rdoubleprime = (x) -> 2+(x*0);
+
+  
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -33,10 +45,32 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {}
 
   @Override
-  public void autonomousInit() {}
+  public void autonomousInit() {
+    time.reset();
+    time.start();
+    
+  }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+
+  Double v = (Math.sqrt(1+Math.pow(rprime.apply(time.get()),2)))/Math.sqrt(901);
+  Double r = Math.pow(v,3)/rdoubleprime.apply(time.get());
+  Double w = (v/r)/((Math.pow(Math.sqrt(901),3))/2);
+
+  /*driveTrain.periodic();
+  driveTrain.setLeftSpeed((v+w)/2);
+  driveTrain.setRightSpeed((v-w)/2);*/
+  
+  while (time.get() < 10){
+    //driveTrain.periodic();
+    driveTrain.setLeftSpeed((v+w)/2);
+    driveTrain.setRightSpeed((v-w)/2);
+    System.out.println(time.get());
+  }
+
+
+  }
 
   @Override
   public void teleopInit() {}
