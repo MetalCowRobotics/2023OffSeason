@@ -4,17 +4,10 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import frc.robot.subsystems.DriveTrain;
-
-import java.util.function.Function;
-
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -24,15 +17,9 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU;
  */
 public class Robot extends TimedRobot {
  
-  DriveTrain driveTrain = new DriveTrain();
-  XboxController box = new XboxController(0);
-
-  Timer time = new Timer();
-
-  Function<Double,Double> r = (t) -> Math.pow(t,2);
-  Function<Double,Double> rprime = (x) -> 2*x;
-  Function<Double,Double> rdoubleprime = (x) -> 2+(x*0);
-
+  DriveTrain m_driveTrain = new DriveTrain();
+  XboxController xbox = new XboxController(0);
+  AnalogPotentiometer ultraSonicSensor = new AnalogPotentiometer(0, 180);
   
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -45,51 +32,20 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {}
 
   @Override
-  public void autonomousInit() {
-    time.reset();
-    time.start();
-    
-  }
+  public void autonomousInit() {}
 
   @Override
-  public void autonomousPeriodic() {
-
-  Double v = (Math.sqrt(1+Math.pow(rprime.apply(time.get()),2)))/Math.sqrt(901);
-  Double r = Math.pow(v,3)/rdoubleprime.apply(time.get());
-  Double w = (v/r)/((Math.pow(Math.sqrt(901),3))/2);
-
-  /*driveTrain.periodic();
-  driveTrain.setLeftSpeed((v+w)/2);
-  driveTrain.setRightSpeed((v-w)/2);*/
-  
-  while (time.get() < 10){
-    //driveTrain.periodic();
-    driveTrain.setLeftSpeed((v+w)/2);
-    driveTrain.setRightSpeed((v-w)/2);
-    System.out.println(time.get());
-  }
-
-
-  }
+  public void autonomousPeriodic() {}
 
   @Override
-  public void teleopInit() {}
-
-
-
+  public void teleopInit() {
+    m_driveTrain.setSetPoint();
+  }
   
-
   @Override
   public void teleopPeriodic() {
-
-  System.out.println(box.getLeftX());
-  /*backRight.setVelocity(driveSpeed);
-  backRight.setAngle(steerAngle);*/
-  driveTrain.setLeftSpeed((Math.pow(box.getLeftY(),3)+Math.pow(box.getRightX(),3))/2);
-  driveTrain.setRightSpeed(-(Math.pow(box.getLeftY(),3)-Math.pow(box.getRightX(),3))/2);
-
-  driveTrain.periodic();
-
+    m_driveTrain.getUltraSonicSensor(ultraSonicSensor.get());
+    m_driveTrain.runPIDMotor();
   }
 
   @Override
@@ -109,7 +65,4 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationPeriodic() {}
-
-  private void applyOperatorInputs() {}
-  
-  }
+}
