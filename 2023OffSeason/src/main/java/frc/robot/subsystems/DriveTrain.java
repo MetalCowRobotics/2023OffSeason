@@ -5,6 +5,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain extends SubsystemBase{
@@ -14,6 +16,9 @@ public class DriveTrain extends SubsystemBase{
     TalonSRX driveMotor2 = new TalonSRX(2);
     TalonSRX driveMotor3 = new TalonSRX(3);
     TalonSRX driveMotor4 = new TalonSRX(4);
+
+    AnalogPotentiometer ultraSonicSensor = new AnalogPotentiometer(0, 180);
+    PIDController ultraSonicPID = new PIDController(0, 0, 0);
 
     /* Variables for Driving */
     double throttleValue;
@@ -83,5 +88,7 @@ public class DriveTrain extends SubsystemBase{
         driveMotor2.set(TalonSRXControlMode.PercentOutput, (((throttleValue - turningValue) / 2)) * speedMultiplier);
         driveMotor3.set(TalonSRXControlMode.PercentOutput, (((-throttleValue + turningValue) / 2)) * speedMultiplier);
         driveMotor4.set(TalonSRXControlMode.PercentOutput, (((-throttleValue - turningValue) / 2)) * speedMultiplier);
+
+        SmartDashboard.putNumber("Ultrasonic Sensor Distance", ultraSonicSensor.get());
     }
 }
