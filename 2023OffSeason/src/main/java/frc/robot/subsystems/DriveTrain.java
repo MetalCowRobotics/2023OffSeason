@@ -20,12 +20,15 @@ public class DriveTrain extends SubsystemBase{
     AnalogPotentiometer ultraSonicSensor = new AnalogPotentiometer(0, 180);
     PIDController ultraSonicPID = new PIDController(0, 0, 0);
 
+    AnalogPotentiometer UltrasonicSensor= new AnalogPotentiometer(2,  180);
+    PIDController PidFinder= new PIDController(0.001,0,0);
     /* Variables for Driving */
     double throttleValue;
     double turningValue;
     double speedMultiplier;
 
     public DriveTrain() {
+        PidFinder.setSetpoint(10.5);
 
         /* Sets one side Inverted to Drive in same Direction */
         driveMotor1.setInverted(false);
@@ -90,5 +93,12 @@ public class DriveTrain extends SubsystemBase{
         driveMotor4.set(TalonSRXControlMode.PercentOutput, (((-throttleValue - turningValue) / 2)) * speedMultiplier);
 
         SmartDashboard.putNumber("Ultrasonic Sensor Distance", ultraSonicSensor.get());
+        driveMotor1.set(TalonSRXControlMode.PercentOutput, -PidFinder.calculate(UltrasonicSensor.get()));
+        driveMotor2.set(TalonSRXControlMode.PercentOutput, -PidFinder.calculate(UltrasonicSensor.get()));
+        driveMotor3.set(TalonSRXControlMode.PercentOutput, PidFinder.calculate(UltrasonicSensor.get()));
+        driveMotor4.set(TalonSRXControlMode.PercentOutput, PidFinder.calculate(UltrasonicSensor.get()));
+        SmartDashboard.putNumber("Petentiometer Range", UltrasonicSensor.get());
+
+
     }
 }
