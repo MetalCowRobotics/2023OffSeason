@@ -28,8 +28,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    applyDriverInputs();
-    m_DriveTrain.periodic();
+    
   }
 
   @Override
@@ -42,7 +41,10 @@ public class Robot extends TimedRobot {
   public void teleopInit() {}
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    applyDriverInputs();
+    m_DriveTrain.periodic();
+  }
 
   @Override
   public void disabledInit() {}
@@ -63,7 +65,5 @@ public class Robot extends TimedRobot {
   public void simulationPeriodic() {}
 
   private void applyDriverInputs() {
-    m_DriveTrain.getCrawlOrSprint(driverController.getLeftTriggerAxis(), driverController.getRightTriggerAxis());
-    m_DriveTrain.getJoystickInputs(driverController.getLeftY(), driverController.getRightX());
   }
 }
