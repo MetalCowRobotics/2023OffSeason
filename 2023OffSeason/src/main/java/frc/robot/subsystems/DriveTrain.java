@@ -69,6 +69,16 @@ public class DriveTrain extends SubsystemBase{
         SmartDashboard.putNumber("Faster", PidFinder.calculate(UltrasonicSensor .get()));
     }
     public void getBButton(){
-        
+        driveMotor1.set(TalonSRXControlMode.PercentOutput, ((0.3)));
+        driveMotor2.set(TalonSRXControlMode.PercentOutput, ((0.3)));
+        driveMotor3.set(TalonSRXControlMode.PercentOutput, ((0.3)));
+        driveMotor4.set(TalonSRXControlMode.PercentOutput, ((0.3)));
+    }
+
+    public void getAButton(){
+        driveMotor1.set(TalonSRXControlMode.PercentOutput, ((0.3)));
+        driveMotor2.set(TalonSRXControlMode.PercentOutput, ((0.3)));
+        driveMotor3.set(TalonSRXControlMode.PercentOutput, ((0.4)));
+        driveMotor4.set(TalonSRXControlMode.PercentOutput, ((0.4)));
     }
 }
