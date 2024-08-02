@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.AnalogGyro;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -23,6 +24,7 @@ public class Robot extends TimedRobot {
   TalonSRX fLeft = new TalonSRX(4);
   TalonSRX bRight = new TalonSRX(2);
   TalonSRX bLeft = new TalonSRX(3);
+  AnalogGyro gyro = new AnalogGyro(0);
   
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -37,10 +39,25 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousInit() {}
+  public void autonomousInit() {
+    gyro.reset();
+  }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+
+    // fRight.setInverted(true);
+    // bRight.setInverted(true);
+
+    System.out.println(gyro.getAngle());
+
+    while(gyro.getAngle()<1){
+      fRight.set(TalonSRXControlMode.PercentOutput, 0.2);
+      fLeft.set(TalonSRXControlMode.PercentOutput, 0.2);
+      bRight.set(TalonSRXControlMode.PercentOutput, 0.2);
+      bLeft.set(TalonSRXControlMode.PercentOutput, 0.2);
+    }
+  }
 
   @Override
   public void teleopInit() {}
@@ -52,10 +69,13 @@ public class Robot extends TimedRobot {
     double drive = driverController.getLeftY();
     double rotate = driverController.getRightX();
 
+    fRight.setInverted(true);
+    bRight.setInverted(true);
+
     //Going Forward + Backward
-    fRight.set(TalonSRXControlMode.PercentOutput, -drive-rotate/2);
+    fRight.set(TalonSRXControlMode.PercentOutput, drive-rotate/2);
+    bRight.set(TalonSRXControlMode.PercentOutput, drive-rotate/2);
     fLeft.set(TalonSRXControlMode.PercentOutput, drive+rotate/2);
-    bRight.set(TalonSRXControlMode.PercentOutput, -drive-rotate/2);
     bLeft.set(TalonSRXControlMode.PercentOutput, drive+rotate/2);
 
     //Strafe
